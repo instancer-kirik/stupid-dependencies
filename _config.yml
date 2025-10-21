@@ -2,7 +2,7 @@
 
 # Site settings
 title: "Stupid Dependencies"
-description: "yeah"
+description: "A doctor for your project that speaks Zig, Gleam, Kotlin, and common sense"
 baseurl: ""
 url: "https://instancer-kirik.github.io/stupid-dependencies"
 
@@ -75,7 +75,7 @@ defaults:
 # Custom variables
 project:
   name: "Stupid Dependencies"
-  tagline: "Its not that hard"
+  tagline: "Fixes your dependency hell with personality"
   repo_url: "https://github.com/instancer-kirik/stupid-dependencies"
   pypi_url: "https://pypi.org/project/stupid-dependencies/"
 

@@ -102,13 +102,13 @@ stupid diff
 
 ### Environment Variables
 
-- `SDS_CACHE_DIR` - Custom cache directory (default: `~/.sds/cache`)
-- `SDS_LOG_LEVEL` - Logging level (`DEBUG`, `INFO`, `WARN`, `ERROR`)
-- `SDS_TIMEOUT` - API timeout in seconds (default: 30)
+- `STUPID_CACHE_DIR` - Custom cache directory (default: `~/.stupid/cache`)
+- `STUPID_LOG_LEVEL` - Logging level (`DEBUG`, `INFO`, `WARN`, `ERROR`)
+- `STUPID_TIMEOUT` - API timeout in seconds (default: 30)
 
 ### Config File
 
-Create `.sds.toml` in your project root:
+Create `.stupid.toml` in your project root:
 
 ```toml
 [general]
@@ -168,7 +168,7 @@ stupid check
 #### Permission errors
 ```bash
 # Check cache directory permissions
-ls -la ~/.sds/
+ls -la ~/.stupid/
 ```
 
 ### Debug Mode
@@ -176,7 +176,7 @@ ls -la ~/.sds/
 Enable verbose logging:
 
 ```bash
-export SDS_LOG_LEVEL=DEBUG
+export STUPID_LOG_LEVEL=DEBUG
 stupid check --verbose
 ```
 
@@ -195,7 +195,7 @@ stupid check --verbose
 - Issue tracking integration
 
 ### Custom Repositories
-Configure additional repositories in `.sds.toml`:
+Configure additional repositories in `.stupid.toml`:
 
 ```toml
 [repositories]
@@ -247,7 +247,7 @@ Want to help make dependency management less painful? Check out our [contributio
 
 ```bash
 git clone {{ site.project.repo_url }}
-cd stupid-dependency-solver
+cd stupid-dependencies
 uv venv
 source .venv/bin/activate
 uv pip install -e .

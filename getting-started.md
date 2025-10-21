@@ -3,15 +3,15 @@ layout: default
 title: Getting Started
 ---
 
-# 🚀 Getting Started with SDS
+# 🚀 Getting Started with Stupid Dependencies
 
-Welcome to **SDS (Stupid Dependency Solver)** - your project's new best friend! This guide will get you up and running in minutes.
+Welcome to **Stupid Dependencies** - your project's new best friend! This guide will get you up and running in minutes.
 
 ## 🎯 What You'll Learn
 
-- How to install and set up SDS
+- How to install and set up Stupid Dependencies
 - Your first conflict detection
-- Understanding SDS output and personality
+- Understanding Stupid Dependencies output and personality
 - Fixing conflicts with confidence
 - Advanced workflows for teams
 

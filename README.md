@@ -1,65 +1,88 @@
-# 🧰 SDS - Stupid Dependency Solver
+# 🧰 Stupid Dependencies
 
 > A doctor for your project that speaks Zig, Gleam, Kotlin, and common sense.
 
-📖 **[Full Documentation & Live Demo](https://your-username.github.io/stupid-dependency-solver)** 📖
+📖 **[Full Documentation & Live Demo](https://instancer-kirik.github.io/stupid-dependencies)** 📖
 
-SDS is a command-line tool that inspects your project directory, detects dependency and environment inconsistencies, and helps you get back to a buildable state. It doesn't try to own your dependencies — it just tells you what's broken, why, and how to fix it without reinventing your toolchain.
+Stupid Dependencies is a command-line tool that inspects your project directory, detects dependency and environment inconsistencies, and helps you get back to a buildable state. It doesn't try to own your dependencies — it just tells you what's broken, why, and how to fix it without reinventing your toolchain.
 
 ## 🧩 What's the Point?
 
 Ever had this happen?
 
 ```bash
-$ cd cool-project
-$ make build
-zig: error: expected zig version 0.12.x, found 0.13.0
+$ ./gradlew build
+> Task :compileKotlin FAILED
+Kotlin version 1.8.20 requires Gradle 6.8.3-8.1, but found 8.3
 ```
 
-Or maybe this?
+Or this nightmare?
 
 ```bash
 $ ./gradlew build
-> Task :compileKotlin FAILED
-Kotlin version mismatch: compiler 1.9.23, target 1.8.22
+> Multiple build failures:
+  - Hilt 2.48 incompatible with Kotlin 1.9.22
+  - Compose BOM 2023.08.00 conflicts with Material3 1.2.0
+  - Coroutines 1.7.3 needs Kotlin >= 1.8.21, found 1.8.20
 ```
 
-SDS catches these mismatches **before** you waste time debugging, and tells you exactly how to fix them with personality:
+Stupid Dependencies catches these version conflicts **before** you waste hours debugging, and shows you exactly what's broken with real version data:
 
 ```bash
-$ sds check
-🩺 Scanning project...
-[zig] build.zig.zon requires zig 0.12.x, found 0.13.0 → ⚠️ ABI mismatch
-[gleam] compiler 1.1.0 ok
-[kotlin] Gradle 8.5 found, target 8.3 declared → ⚠️ minor mismatch
-Status: not buildable
-Run `sds fix` for repair suggestions.
+$ stupid check
+🩺 Scanning Android project...
 
-$ sds fix
-🔧 Suggested actions:
-1. Downgrade zig to 0.12.1 (matches zon manifest) 🟢
-   → zigup 0.12.1
-2. Sync Gradle wrapper to 8.3 🟢
-   → ./gradlew wrapper --gradle-version 8.3
-Apply fixes? [y/N] y
+❌ CRITICAL: Kotlin-Gradle compatibility matrix violation
+   • Kotlin 1.8.20 requires Gradle 6.8.3 - 8.1, found 8.3
+   💡 Either downgrade Gradle to 8.1 or upgrade Kotlin to 1.9.0+
+
+⚠️  OUTDATED: 3 dependencies behind latest versions
+   • Hilt 2.48 → 2.56.2 (8 versions behind)
+   • OkHttp 4.11.0 → 4.12.0 (available)
+   • Compose BOM 2023.08.00 → 2024.02.00 (major update)
+
+🔄 VERSION CONFLICTS detected:
+   • kotlinx-coroutines-core 1.6.3 vs kotlinx-coroutines-android 1.7.3
+   • material3 1.2.0 incompatible with compose-bom 2023.08.00
+
+$ stupid fix --live
+📡 Querying Maven Central for latest stable versions...
+
+🔧 Recommended fixes:
+1. Upgrade Kotlin: 1.8.20 → 1.9.22 (supports Gradle 8.3) 🟢
+   → Update gradle/libs.versions.toml: kotlin = "1.9.22"
+   
+2. Align Coroutines versions to 1.7.3 🟢  
+   → Update build.gradle.kts dependencies
+   
+3. Update Hilt to 2.56.2 (no breaking changes) 🟢
+   → Safe upgrade with compatibility maintained
+
+Apply all fixes? [y/N]
 ```
 
 ## 🚀 Installation
 
-### Via pipx (Recommended)
-```bash
-pipx install stupid-dependency-solver
-```
-
 ### Via pip
 ```bash
-pip install stupid-dependency-solver
+pip install stupid-dependencies
+```
+
+### Via uv (Recommended)
+```bash
+uv tool install stupid-dependencies
+```
+
+### Try it instantly
+```bash
+# See it in action with live API demo
+stupid demo --live
 ```
 
 ### From Source
 ```bash
-git clone https://github.com/example/stupid-dependency-solver.git
-cd stupid-dependency-solver
+git clone https://github.com/instancer-kirik/stupid-dependencies.git
+cd stupid-dependencies
 pip install -e .
 ```
 
@@ -69,32 +92,32 @@ pip install -e .
 
 | Command | Purpose |
 |---------|---------|
-| `sds check` | Scan current directory and report version/dependency issues |
-| `sds fix` | Suggest or apply minimal repairs |
-| `sds snapshot` | Capture a buildable environment as `sds.lock` |
-| `sds diff` | Compare current state to last known snapshot |
-| `sds explain` | Print reasoning for conflicts in plain English |
+| `stupid check` | Scan current directory and report version/dependency issues |
+| `stupid fix` | Suggest or apply minimal repairs |
+| `stupid snapshot` | Capture a buildable environment as `stupid.lock` |
+| `stupid diff` | Compare current state to last known snapshot |
+| `stupid explain` | Print reasoning for conflicts in plain English |
 
 ### Examples
 
 #### Check Your Project
 ```bash
 $ cd my-awesome-project
-$ sds check
+$ stupid check
 🩺 Scanning project...
-[zig] build.zig.zon requires zig 0.12.1, found 0.13.0 → ❌ ABI mismatch
 [kotlin] Gradle 8.5 vs target 8.3 → ⚠️ minor mismatch
-[node] package.json engines.node ">=18.0.0", found 16.20.0 → ❌ insufficient
+[android] Hilt 2.48 → 2.56.2 available (8 versions behind)
+[dependencies] Version conflicts: coroutines 1.6.3 vs 1.7.3
 Status: not buildable
-Run `sds fix` for repair suggestions.
+Run `stupid fix` for repair suggestions.
 ```
 
 #### Get Personality-Rich Explanations
 ```bash
-$ sds explain zig
+$ stupid explain kotlin
 🧠 Detailed conflict analysis:
 
-🔍 ZIG Issue:
+🔍 KOTLIN/GRADLE Issue:
    Problem: build.zig.zon requires zig 0.12.1, found 0.13.0
    Reason: ABI mismatch
    Details: 🤔 Detected zig 0.13.0, which thinks it's better than 0.12.1.

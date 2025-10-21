@@ -25,7 +25,7 @@ pip install stupid-dependencies
 stupid check
 stupid fix --apply
 
-# See the magic in action
+# See the magic in action with REAL version data
 stupid demo --live
 ```
 
@@ -43,14 +43,15 @@ stupid demo --live
 🎬 Welcome to the 'Stupid Dependencies' Reddit Demo!
 🌐 LIVE VERSION DEMO - Querying real Maven Central & GitHub APIs!
 
+❌ CRITICAL: Kotlin-Gradle compatibility matrix violation
+   • Kotlin 1.8.20 requires Gradle 6.8.3 - 8.1, found 8.3
+   💡 Either downgrade Gradle to 8.1 or upgrade Kotlin to 1.9.0+
+
 🎯 LIVE DATA: Found 4 real version issues from Maven Central:
 📦 com.google.dagger:hilt-android
-   Current: 2.48
-   Latest from Maven Central: 2.56.2
-
-❌ LIVE COMPATIBILITY ISSUE:
-   • Kotlin 1.8.20 requires Gradle 6.8.3 - 8.1, but found 8.3
-   💡 Either downgrade Gradle to 8.1 or upgrade Kotlin
+   Current: 2.48 → Latest: 2.56.2 (8 versions behind)
+📦 kotlinx-coroutines-core: 1.6.3 vs kotlinx-coroutines-android: 1.7.3
+📦 compose-bom: 2023.08.00 → 2024.02.00 (major update available)
 ```
 
 ---
