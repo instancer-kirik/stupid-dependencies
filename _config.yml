@@ -1,0 +1,92 @@
+# GitHub Pages Configuration for Stupid Dependencies
+
+# Site settings
+title: "Stupid Dependencies"
+description: "yeah"
+baseurl: ""
+url: "https://instancer-kirik.github.io/stupid-dependencies"
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+theme: minima
+
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+# Collections
+collections:
+  docs:
+    output: true
+    permalink: /:collection/:name/
+
+# Navigation
+header_pages:
+  - index.md
+  - getting-started.md
+  - demo.md
+  - showcase.md
+  - docs/index.md
+
+# Social links
+github_username: instancer-kirik
+
+# Exclude from processing
+exclude:
+  - .venv/
+  - venv/
+  - __pycache__/
+  - "*.egg-info/"
+  - build/
+  - dist/
+  - tests/
+  - .pytest_cache/
+  - requirements*.txt
+  - setup.py
+  - Makefile
+  - .pre-commit-config.yaml
+
+# Include files
+include:
+  - _pages
+
+# Sass
+sass:
+  sass_dir: _sass
+  style: compressed
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+      author: "Instance Select"
+  - scope:
+      path: ""
+      type: "docs"
+    values:
+      layout: "doc"
+
+# Custom variables
+project:
+  name: "Stupid Dependencies"
+  tagline: "Its not that hard"
+  repo_url: "https://github.com/instancer-kirik/stupid-dependencies"
+  pypi_url: "https://pypi.org/project/stupid-dependencies/"
+
+# Features to highlight
+features:
+  - title: "Live API Queries"
+    description: "Real-time version checking from Maven Central & GitHub"
+    icon: "🌐"
+  - title: "Smart Compatibility"
+    description: "Kotlin-Gradle-Android compatibility matrix built-in"
+    icon: "🧠"
+  - title: "Multi-Language"
+    description: "Supports Kotlin, Zig, Gleam, Elixir, and more coming soon"
+    icon: "🚀"

@@ -1,0 +1,23 @@
+.{
+    .name = "conflicted-example",
+    .version = "0.1.0",
+    .minimum_zig_version = "0.12.1",
+
+    .dependencies = .{
+        .ziglibc = .{
+            .url = "https://github.com/ziglang/zig/archive/0.12.1.tar.gz",
+            .hash = "1220abcd1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+        },
+        .example_dep = .{
+            .url = "https://github.com/example/example-dep/archive/v1.0.0.tar.gz",
+            .hash = "1220efgh5678901234567890abcdef1234567890abcdef1234567890abcdef12",
+        },
+    },
+
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+        "README.md",
+    },
+}

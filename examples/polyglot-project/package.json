@@ -1,0 +1,53 @@
+{
+  "name": "polyglot-project-example",
+  "version": "0.1.0",
+  "description": "Example polyglot project with intentional dependency conflicts for SDS testing",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "jest",
+    "build": "webpack --mode production",
+    "dev": "webpack serve --mode development",
+    "lint": "eslint src/",
+    "kotlin": "kotlinc -include-runtime -d build/ src/main.kt",
+    "zig": "zig build",
+    "gleam": "gleam run"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "axios": "^1.4.0",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.4"
+  },
+  "devDependencies": {
+    "jest": "^29.5.0",
+    "webpack": "^5.88.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1",
+    "eslint": "^8.44.0",
+    "@babel/core": "^7.22.5",
+    "@babel/preset-env": "^7.22.5",
+    "babel-loader": "^9.1.2"
+  },
+  "keywords": [
+    "polyglot",
+    "multi-language",
+    "sds",
+    "dependency-solver",
+    "example"
+  ],
+  "author": "SDS Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/example/stupid-dependency-solver.git"
+  },
+  "bugs": {
+    "url": "https://github.com/example/stupid-dependency-solver/issues"
+  },
+  "homepage": "https://github.com/example/stupid-dependency-solver#readme"
+}

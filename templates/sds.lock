@@ -1,0 +1,35 @@
+[env]
+# Tool versions captured at snapshot time
+# zig = "0.12.1"
+# gleam = "1.1.0"
+# kotlin = "1.9.23"
+# gradle = "8.3"
+# java = "17"
+# node = "18.17.0"
+# npm = "9.6.7"
+# python = "3.11.0"
+# pip = "23.1.2"
+# rust = "1.71.0"
+# cargo = "1.71.0"
+# go = "1.21.0"
+
+[notes]
+# Metadata about this snapshot
+generated = "2025-01-20T12:00:00Z"
+status = "buildable"  # buildable, broken, unknown
+path = "/path/to/project"
+sds_version = "0.1.0"
+
+[conflicts]
+# Record of known conflicts at snapshot time (optional)
+# These help track what was intentionally ignored
+# example = { tool = "zig", severity = "warning", message = "version mismatch accepted" }
+
+[overrides]
+# Manual overrides for tool detection (optional)
+# Use when SDS can't properly detect a tool version
+# example_tool = "1.2.3"
+
+# This file represents a buildable environment snapshot.
+# Use 'sds diff' to compare current state against this baseline.
+# Use 'sds snapshot --force' to update this file.

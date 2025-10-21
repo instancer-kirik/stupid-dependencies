@@ -1,0 +1,32 @@
+name = "polyglot_project"
+version = "0.1.0"
+description = "Example polyglot project component written in Gleam"
+
+gleam = ">= 1.0.0"
+
+[dependencies]
+gleam_stdlib = ">= 0.34.0 and < 2.0.0"
+gleam_json = ">= 1.0.0 and < 2.0.0"
+gleam_http = ">= 3.6.0 and < 4.0.0"
+gleam_httpc = ">= 2.4.0 and < 3.0.0"
+
+[dev-dependencies]
+gleeunit = ">= 1.0.0 and < 2.0.0"
+
+[javascript]
+runtime = "node"
+
+[erlang]
+application_start_module = "polyglot_project/app"
+
+# This Gleam configuration is part of a polyglot project
+# that also includes Node.js, Kotlin, and potentially Zig components.
+#
+# Potential conflicts SDS should detect:
+# 1. Gleam version requirement vs installed gleam compiler
+# 2. Node.js runtime compatibility with package.json engines
+# 3. Dependency version conflicts between languages
+#
+# The gleam version constraint ">= 1.0.0" might not match
+# your installed Gleam compiler version, creating a conflict
+# that SDS should catch and help resolve.

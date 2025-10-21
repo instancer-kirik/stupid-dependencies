@@ -1,0 +1,90 @@
+[versions]
+kotlin = "1.9.20"
+kotlinStdlib = "1.8.22"  # Intentional mismatch
+spring-boot = "3.2.0"
+spring-dependency-management = "1.1.4"
+jackson = "2.15.2"
+jacksonCore = "2.14.1"  # Intentional version conflict
+kotlinx-coroutines = "1.7.1"
+kotlinx-coroutines-reactor = "1.6.4"  # Intentional mismatch
+kotlinx-serialization = "1.6.0"
+arrow = "1.2.1"
+ksp = "1.9.20-1.0.14"
+mockk = "1.13.5"
+testcontainers = "1.19.0"
+postgresql = "42.6.0"
+r2dbc-postgresql = "0.8.13.RELEASE"
+logback = "1.4.8"
+slf4j = "2.0.7"
+junit5 = "5.10.0"
+springmockk = "4.0.2"
+spring-cloud = "2023.0.0"
+kotlin-bom = "1.9.10"  # Different from main kotlin version
+
+[libraries]
+# Kotlin stdlib with version conflicts
+kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlinStdlib" }
+kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlin" }
+
+# Spring Boot starters
+spring-boot-starter-web = { group = "org.springframework.boot", name = "spring-boot-starter-web" }
+spring-boot-starter-data-jpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa" }
+spring-boot-starter-security = { group = "org.springframework.boot", name = "spring-boot-starter-security" }
+spring-boot-starter-actuator = { group = "org.springframework.boot", name = "spring-boot-starter-actuator" }
+spring-boot-starter-data-r2dbc = { group = "org.springframework.boot", name = "spring-boot-starter-data-r2dbc" }
+spring-boot-starter-test = { group = "org.springframework.boot", name = "spring-boot-starter-test" }
+spring-boot-configuration-processor = { group = "org.springframework.boot", name = "spring-boot-configuration-processor" }
+
+# Jackson with version conflicts
+jackson-module-kotlin = { group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version.ref = "jackson" }
+jackson-core = { group = "com.fasterxml.jackson.core", name = "jackson-core", version.ref = "jacksonCore" }
+
+# Kotlinx libraries with mismatched versions
+kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-reactor = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-reactor", version.ref = "kotlinx-coroutines-reactor" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version = "1.7.3" }
+
+# Database
+postgresql = { group = "org.postgresql", name = "postgresql", version.ref = "postgresql" }
+r2dbc-postgresql = { group = "io.r2dbc", name = "r2dbc-postgresql", version.ref = "r2dbc-postgresql" }
+
+# Logging
+logback-classic = { group = "ch.qos.logback", name = "logback-classic", version.ref = "logback" }
+slf4j-api = { group = "org.slf4j", name = "slf4j-api", version.ref = "slf4j" }
+
+# Arrow functional programming
+arrow-core = { group = "io.arrow-kt", name = "arrow-core", version.ref = "arrow" }
+arrow-fx-coroutines = { group = "io.arrow-kt", name = "arrow-fx-coroutines", version.ref = "arrow" }
+
+# Test libraries
+kotlin-test-junit5 = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit5", version = "1.9.0" }
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+springmockk = { group = "com.ninja-squad", name = "springmockk", version.ref = "springmockk" }
+testcontainers-junit-jupiter = { group = "org.testcontainers", name = "junit-jupiter", version.ref = "testcontainers" }
+testcontainers-postgresql = { group = "org.testcontainers", name = "postgresql", version.ref = "testcontainers" }
+testcontainers-r2dbc = { group = "org.testcontainers", name = "r2dbc", version.ref = "testcontainers" }
+
+# BOMs and platforms
+spring-cloud-dependencies = { group = "org.springframework.cloud", name = "spring-cloud-dependencies", version.ref = "spring-cloud" }
+kotlin-bom = { group = "org.jetbrains.kotlin", name = "kotlin-bom", version.ref = "kotlin-bom" }
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
+kotlin-jpa = { id = "org.jetbrains.kotlin.plugin.jpa", version.ref = "kotlin" }
+spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
+spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "spring-dependency-management" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+gradle-toolchains = { id = "org.gradle.toolchains", version = "0.4.0" }
+
+[bundles]
+spring-boot-web = ["spring-boot-starter-web", "spring-boot-starter-actuator", "spring-boot-starter-security"]
+kotlin-coroutines = ["kotlinx-coroutines-core", "kotlinx-coroutines-reactor"]
+jackson = ["jackson-module-kotlin", "jackson-core"]
+database = ["spring-boot-starter-data-jpa", "spring-boot-starter-data-r2dbc", "postgresql", "r2dbc-postgresql"]
+arrow = ["arrow-core", "arrow-fx-coroutines"]
+testing = ["spring-boot-starter-test", "kotlin-test-junit5", "mockk", "springmockk", "kotlinx-coroutines-test"]
+testcontainers = ["testcontainers-junit-jupiter", "testcontainers-postgresql", "testcontainers-r2dbc"]
+logging = ["logback-classic", "slf4j-api"]
