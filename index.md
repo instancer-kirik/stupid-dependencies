@@ -5,13 +5,12 @@ title: Home
 
 # 🧰 Stupid Dependencies
 
-## A doctor for your project that speaks Zig, Gleam, Kotlin, and common sense
+## F
 
-Ever had your Kotlin build break because of version conflicts? Gradle refusing to play nice with your Android project? Dependencies so tangled you need a PhD in Maven to understand them?
+It's not that hard
 
-**We've all been there.** 😤
 
-Stupid Dependencies fixes your dependency hell with personality, live API queries, and actual solutions that work.
+Stupid Dependencies fixes your dependency hell with live API queries, experience, and actual solutions that work.
 
 ---
 
@@ -22,8 +21,8 @@ Stupid Dependencies fixes your dependency hell with personality, live API querie
 pip install stupid-dependencies
 
 # Fix your broken project
-stupid check
-stupid fix --apply
+stupid look
+stupid cope
 
 # See the magic in action with REAL version data
 stupid demo --live
@@ -50,17 +49,17 @@ stupid demo --live
    • Multi-file version chaos across gradle/libs.versions.toml + build.gradle files
 
 🔄 VERSION CONFLICTS: 4 files, 8 dependencies tangled:
-📦 gradle/libs.versions.toml: kotlin = "1.8.20" 
+📦 gradle/libs.versions.toml: kotlin = "1.8.20"
 📦 project/build.gradle: Room 2.6.0 needs Kotlin 1.9.20+
 📦 app/build.gradle: Hilt 2.48 incompatible with KSP 1.9.20
 📦 Compose BOM 2023.08.00 vs Navigation Compose 2.7.5 → Runtime crashes
 
 🔧 MIGRATION PLAN (saves 6+ hours of debugging):
    ✅ Kotlin 1.8.20 → 1.9.20 + KSP 1.9.20-1.0.14
-   ✅ Complete KAPT removal + KSP migration  
+   ✅ Complete KAPT removal + KSP migration
    ✅ Compose BOM 2023.08.00 → 2024.02.00 for Navigation compatibility
    ✅ Hilt 2.48 → 2.50 (first stable KSP version)
-   
+
 ⚡ Result: 40% faster builds, zero runtime crashes
 ```
 
@@ -73,17 +72,17 @@ stupid demo --live
     <h3>🌐 Live API Queries</h3>
     <p>Real-time version checking from Maven Central, GitHub, and other package repositories. No more outdated data.</p>
   </div>
-  
+
   <div class="feature">
     <h3>🧠 Smart Compatibility</h3>
     <p>Built-in compatibility matrices for Kotlin-Gradle-Android. Knows which versions actually work together.</p>
   </div>
-  
+
   <div class="feature">
     <h3>😎 Personality Plus</h3>
     <p>Sarcastic comments and helpful explanations. Makes debugging dependency hell almost... fun?</p>
   </div>
-  
+
   <div class="feature">
     <h3>🎯 Actionable Fixes</h3>
     <p>Doesn't just tell you what's wrong - shows you exactly how to fix it with copy-paste commands.</p>
@@ -94,7 +93,7 @@ stupid demo --live
 
 ## 🔥 What Makes This Different?
 
-**Other tools:** *"You have a version conflict."*  
+**Other tools:** *"You have a version conflict."*
 **Stupid Dependencies:** *"Your Kotlin 1.8.20 is having an existential crisis with Gradle 8.3. Here's exactly how to fix it."*
 
 - **Actually works with real projects** - tested on messy, real-world codebases
@@ -107,7 +106,7 @@ stupid demo --live
 ## 🎯 Perfect For
 
 - **Android developers** drowning in Gradle/Kotlin version hell
-- **Teams** tired of "it works on my machine" dependency issues  
+- **Teams** tired of "it works on my machine" dependency issues
 - **CI/CD pipelines** that break when dependencies update
 - **Anyone** who's ever seen `FAILURE: Build failed with an exception` and wanted to throw their laptop
 
@@ -117,23 +116,23 @@ stupid demo --live
 
 ```bash
 # Scan your project for issues
-stupid check
+stupid look
 
-# Get sarcastic but helpful explanations
+# Get helpful explanations
 stupid explain kotlin
 
 # See what fixes are available
-stupid fix
+stupid cope
 
 # Actually apply the fixes
-stupid fix --apply
+stupid cope --apply
 
 # Save your working state before you break it
 stupid snapshot
 
 # Multi-language support
-stupid check --lang kotlin
-stupid check --lang zig
+stupid look --lang kotlin
+stupid look --lang zig
 ```
 
 ---
@@ -264,7 +263,7 @@ This tool was born from **real pain** - 2023-2024 Kotlin ecosystem chaos, Androi
     flex-direction: column;
     align-items: center;
   }
-  
+
   .btn {
     width: 200px;
   }
