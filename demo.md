@@ -41,9 +41,9 @@ The demo shows **real dependency detection** for Android/Kotlin projects:
 stupid demo                    # Full Kotlin/Android demo
 
 # Use on your broken project
-stupid check                   # "Why won't this build?"
-stupid fix                     # "How do I fix it?"
-stupid fix --apply             # "Just fix it already!"
+stupid look                    # "Why won't this build?"
+stupid cope                    # "How do I fix it?"
+stupid cope --apply            # "Just fix it already!"
 
 # Advanced features
 stupid explain kotlin          # "Explain like I'm 5"
@@ -65,7 +65,7 @@ stupid diff                   # "What did I break?"
    • app/build.gradle: Hilt 2.48 incompatible with KSP 1.9.20
 4. [navigation] Compose BOM 2023.08.00 vs Navigation Compose 2.7.5 → ❌ Runtime crashes
 
-🔧 KAPT→KSP Migration Plan (saves you 6+ hours):
+🔧 KAPT→KSP Coping Plan (saves you 6+ hours):
 1. Upgrade Kotlin: 1.8.20 → 1.9.20 🟢
    → gradle/libs.versions.toml: kotlin = "1.9.20", ksp = "1.9.20-1.0.14"
 2. Complete KSP migration 🟢

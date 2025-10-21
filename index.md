@@ -22,7 +22,7 @@ pip install stupid-dependencies
 
 # Fix your broken project
 stupid look
-stupid cope
+stupid cope --apply
 
 # See the magic in action with REAL version data
 stupid demo --live
@@ -118,7 +118,7 @@ stupid demo --live
 # Scan your project for issues
 stupid look
 
-# Get helpful explanations
+# Get sarcastic but helpful explanations
 stupid explain kotlin
 
 # See what fixes are available

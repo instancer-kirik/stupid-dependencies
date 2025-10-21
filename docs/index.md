@@ -30,32 +30,32 @@ Welcome to the Stupid Dependencies documentation! Here you'll find everything yo
 
 ### Core Commands
 
-#### `stupid check`
+#### `stupid look`
 Scans your project for dependency issues.
 
 ```bash
 # Basic scan
-stupid check
+stupid look
 
 # Scan specific directory
-stupid check --path ./my-project
+stupid look --path ./my-project
 
 # Verbose output
-stupid check --verbose
+stupid look --verbose
 ```
 
-#### `stupid fix`
+#### `stupid cope`
 Shows available fixes for detected issues.
 
 ```bash
 # Show potential fixes
-stupid fix
+stupid cope
 
 # Apply fixes automatically
-stupid fix --apply
+stupid cope --apply
 
 # Interactive mode
-stupid fix --interactive
+stupid cope --interactive
 ```
 
 #### `stupid demo`
@@ -177,7 +177,7 @@ Enable verbose logging:
 
 ```bash
 export STUPID_LOG_LEVEL=DEBUG
-stupid check --verbose
+stupid look --verbose
 ```
 
 ---

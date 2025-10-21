@@ -47,13 +47,13 @@ pip install -e .
 
 > 💡 **Tip**: SDS works by calling your existing tools (like `zig version`, `node --version`), so you need them installed for detection to work.
 
-## 🧪 Your First SDS Check
+## 🧪 Your First Look
 
 Let's dive right in! Navigate to any project directory and run:
 
 ```bash
 cd your-project
-sds check
+stupid look
 ```
 
 ### What You'll See
@@ -73,7 +73,7 @@ Status: buildable
 [zig] build.zig.zon requires zig 0.12.x, found 0.13.0 → ⚠️ ABI mismatch
 [node] package.json engines.node ">=18.0.0", found 16.20.0 → ❌ insufficient
 Status: not buildable
-Run `sds fix` for repair suggestions.
+Run `stupid cope` for repair suggestions.
 ```
 
 ## 🔧 Understanding and Fixing Conflicts
@@ -100,7 +100,7 @@ sds explain
 ### Step 2: Get Fix Suggestions
 
 ```bash
-sds fix
+stupid cope
 ```
 
 **Example Output:**
@@ -119,13 +119,13 @@ You have several options:
 
 ```bash
 # Review fixes interactively (safest)
-sds fix
+stupid cope
 
 # See what would be done without applying
-sds fix --dry-run
+stupid cope --dry-run
 
 # Apply fixes automatically (for CI/scripts)
-sds fix --apply
+stupid cope --apply
 ```
 
 ## 🎭 Understanding SDS Personality
@@ -184,10 +184,10 @@ status = "buildable"
 
 ```bash
 # Compare current state to snapshot
-sds diff
+stupid diff
 
 # Check if environment matches snapshot
-sds check  # Will reference sds.lock if present
+stupid look  # Will reference stupid.lock if present
 ```
 
 **Example Diff Output:**
@@ -204,13 +204,13 @@ sds check  # Will reference sds.lock if present
 ```bash
 # Morning routine - check project health
 cd my-project
-sds check
+stupid look
 
 # If issues found, investigate
-sds explain
+stupid explain
 
 # Fix issues
-sds fix
+stupid cope
 ```
 
 ### New Team Member Setup
@@ -220,19 +220,19 @@ git clone project-repo
 cd project-repo
 
 # Check what's needed
-sds check
+stupid look
 
-# Follow SDS suggestions to match team environment
-sds fix --apply
+# Follow Stupid Dependencies suggestions to match team environment
+stupid cope --apply
 ```
 
 ### Before Important Builds
 ```bash
 # Ensure environment is stable
-sds check
+stupid look
 
 # Create snapshot of working state
-sds snapshot
+stupid snapshot
 
 # Proceed with confidence
 make build  # or your build command
@@ -241,9 +241,9 @@ make build  # or your build command
 ### CI/CD Integration
 ```bash
 # In your CI script
-sds check || {
+stupid look || {
   echo "Environment conflicts detected"
-  sds explain
+  stupid explain
   exit 1
 }
 ```
@@ -256,7 +256,7 @@ sds check || {
 - Use `zigup` for easy version switching
 
 ### Node.js Projects
-- SDS checks `package.json` engines constraints
+- Stupid Dependencies checks `package.json` engines constraints
 - Use `nvm` for Node version management
 - Both `node` and `npm` versions are validated
 
@@ -294,20 +294,20 @@ echo $PATH
 
 ### Explore Examples
 ```bash
-# Try SDS on included examples
+# Try Stupid Dependencies on included examples
 cd examples/conflicted-zig-project
-sds check
-sds explain
-sds fix
+stupid look
+stupid explain
+stupid cope
 
 cd ../polyglot-project
-sds check
+stupid look
 ```
 
 ### Team Integration
 1. **Share snapshots**: Commit `sds.lock` files to version control
-2. **CI integration**: Add `sds check` to your build pipeline
-3. **Onboarding**: New developers run `sds check` to verify setup
+2. **CI integration**: Add `stupid look` to your build pipeline
+3. **Onboarding**: New developers run `stupid look` to verify setup
 
 ### Advanced Usage
 - Learn about `sds explain <tool>` for specific tool analysis
@@ -317,7 +317,7 @@ sds check
 ## 💡 Pro Tips
 
 ### 🎯 Best Practices
-1. **Run `sds check` before starting work** - catch issues early
+1. **Run `stupid look` before starting work** - catch issues early
 2. **Create snapshots after successful builds** - document working states
 3. **Use in CI/CD** - prevent environment drift in deployments
 4. **Share team environments** - commit sds.lock files
@@ -325,27 +325,27 @@ sds check
 ### 🔧 Power User Features
 ```bash
 # Check specific directory
-sds check --path ./backend
+stupid look --path ./backend
 
 # Verbose output for debugging
-sds check --verbose
+stupid look --verbose
 
 # Force snapshot overwrite
-sds snapshot --force
+stupid snapshot --force
 ```
 
 ### 🤝 Team Workflows
 - **Morning standup**: "Any environment conflicts?"
 - **Code reviews**: Include sds.lock changes
-- **Release preparation**: Verify with `sds check`
+- **Release preparation**: Verify with `stupid look`
 
 ## 🆘 Getting Help
 
 ### Built-in Help
 ```bash
-sds --help          # General help
-sds check --help    # Command-specific help
-sds fix --help      # Fix command options
+stupid --help          # General help
+stupid look --help     # Command-specific help
+stupid cope --help     # Fix command options
 ```
 
 ### Community Resources

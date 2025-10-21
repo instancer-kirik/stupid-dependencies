@@ -23,9 +23,9 @@ def main():
 🚀 Perfect for Reddit demos:
   stupid demo              # 🔥 Kotlin/Android dependency detection magic
   stupid demo --live       # 🌐 Query live Maven Central & GitHub APIs
-  stupid check             # Scan current project for issues
-  stupid fix               # Show fixes with sarcastic comments
-  stupid fix --apply       # Actually fix your broken dependencies
+  stupid look              # Scan current project for issues
+  stupid cope              # Show fixes with sarcastic comments
+  stupid cope --apply      # Actually fix your broken dependencies
 
 🎯 For when your build is broken:
   stupid explain kotlin    # "Why is my Kotlin broken?" - We'll tell you
@@ -38,7 +38,7 @@ def main():
 
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
-    # Check command
+    # Check command (and alias)
     check_parser = subparsers.add_parser("check", help="Scan project for issues")
     check_parser.add_argument(
         "--path", "-p", default=".", help="Project directory to scan"
@@ -47,7 +47,16 @@ def main():
         "--verbose", "-v", action="store_true", help="Show detailed output"
     )
 
-    # Fix command
+    # Look command (alias for check)
+    look_parser = subparsers.add_parser("look", help="Scan project for issues")
+    look_parser.add_argument(
+        "--path", "-p", default=".", help="Project directory to scan"
+    )
+    look_parser.add_argument(
+        "--verbose", "-v", action="store_true", help="Show detailed output"
+    )
+
+    # Fix command (and alias)
     fix_parser = subparsers.add_parser("fix", help="Suggest or apply fixes")
     fix_parser.add_argument(
         "--path", "-p", default=".", help="Project directory to fix"
@@ -56,6 +65,20 @@ def main():
         "--apply", action="store_true", help="Automatically apply fixes"
     )
     fix_parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Show what would be done without applying",
+    )
+
+    # Cope command (alias for fix)
+    cope_parser = subparsers.add_parser("cope", help="Suggest or apply fixes")
+    cope_parser.add_argument(
+        "--path", "-p", default=".", help="Project directory to fix"
+    )
+    cope_parser.add_argument(
+        "--apply", action="store_true", help="Automatically apply fixes"
+    )
+    cope_parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Show what would be done without applying",
@@ -80,53 +103,46 @@ def main():
     explain_parser = subparsers.add_parser(
         "explain", help="Explain conflicts in detail"
     )
-    explain_parser.add_argument(
-        "target", nargs="?", help="Tool/dependency to explain (e.g., 'zig', 'kotlin')"
-    )
-    explain_parser.add_argument("--path", "-p", default=".", help="Project directory")
+    explain_parser.add_argument("tool", nargs="?", help="Specific tool to explain")
 
     # Demo command
-    demo_parser = subparsers.add_parser("demo", help="Show working Kotlin/Android demo")
+    demo_parser = subparsers.add_parser("demo", help="Run demonstration")
+    demo_parser.add_argument("--live", action="store_true", help="Use real API queries")
     demo_parser.add_argument(
-        "--type",
-        choices=["kotlin", "android", "all", "live"],
-        default="kotlin",
-        help="Type of demo to run",
-    )
-    demo_parser.add_argument(
-        "--live",
-        action="store_true",
-        help="Use live repository data (requires internet)",
+        "--android", action="store_true", help="Focus on Android demo"
     )
 
     args = parser.parse_args()
 
     if not args.command:
         parser.print_help()
-        return 0
-
-    # Only set project_path for commands that need it
-    if hasattr(args, "path"):
-        project_path = Path(args.path).resolve()
-    else:
-        project_path = Path(".").resolve()
+        return
 
     try:
-        if args.command == "check":
-            return cmd_check(project_path, args.verbose)
-        elif args.command == "fix":
-            return cmd_fix(project_path, args.apply, args.dry_run)
+        project_path = Path(getattr(args, "path", ".")).resolve()
+
+        if args.command in ["check", "look"]:
+            cmd_check(project_path, getattr(args, "verbose", False))
+        elif args.command in ["fix", "cope"]:
+            cmd_fix(
+                project_path,
+                getattr(args, "apply", False),
+                getattr(args, "dry_run", False),
+            )
         elif args.command == "snapshot":
-            return cmd_snapshot(project_path, args.force)
+            cmd_snapshot(project_path, getattr(args, "force", False))
         elif args.command == "diff":
-            return cmd_diff(project_path)
+            cmd_diff(project_path)
         elif args.command == "explain":
-            return cmd_explain(project_path, args.target)
+            cmd_explain(project_path, getattr(args, "tool", None))
         elif args.command == "demo":
-            demo_type = getattr(args, "type", "kotlin")
             if getattr(args, "live", False):
-                demo_type = "live"
-            return cmd_demo(demo_type)
+                cmd_live_demo()
+            else:
+                cmd_demo()
+        else:
+            print(f"Unknown command: {args.command}")
+            parser.print_help()
     except KeyboardInterrupt:
         print("\n🚫 Interrupted by user")
         return 1

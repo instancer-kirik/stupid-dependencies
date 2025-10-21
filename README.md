@@ -35,7 +35,7 @@ $ ./gradlew build
 Stupid Dependencies catches these version conflicts **before** you waste hours debugging, and shows you exactly what's broken with real version data:
 
 ```bash
-$ stupid check
+$ stupid look
 🩺 Scanning Android project (3 Gradle files)...
 
 ❌ CRITICAL: KAPT→KSP migration incomplete
@@ -53,7 +53,7 @@ $ stupid check
    • material3 1.2.0 requires compose-bom 2024.02.00+
    • Room navigation integration broken by version mismatch
 
-$ stupid fix --live
+$ stupid cope --live
 📡 Querying Maven Central + Android compatibility matrices...
 
 🔧 KAPT→KSP Migration Plan:
@@ -108,8 +108,8 @@ pip install -e .
 
 | Command | Purpose |
 |---------|---------|
-| `stupid check` | Scan current directory and report version/dependency issues |
-| `stupid fix` | Suggest or apply minimal repairs |
+| `stupid look` | Scan current directory and report version/dependency issues |
+| `stupid cope` | Suggest or apply minimal repairs |
 | `stupid snapshot` | Capture a buildable environment as `stupid.lock` |
 | `stupid diff` | Compare current state to last known snapshot |
 | `stupid explain` | Print reasoning for conflicts in plain English |
@@ -119,13 +119,13 @@ pip install -e .
 #### Check Your Project
 ```bash
 $ cd my-awesome-project
-$ stupid check
+$ stupid look
 🩺 Scanning project...
 [kotlin] Gradle 8.5 vs target 8.3 → ⚠️ minor mismatch
 [android] Hilt 2.48 → 2.56.2 available (8 versions behind)
 [dependencies] Version conflicts: coroutines 1.6.3 vs 1.7.3
 Status: not buildable
-Run `stupid fix` for repair suggestions.
+Run `stupid cope` for repair suggestions.
 ```
 
 #### Get Personality-Rich Explanations
