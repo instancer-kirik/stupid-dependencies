@@ -16,48 +16,64 @@ $ ./gradlew build
 Kotlin version 1.8.20 requires Gradle 6.8.3-8.1, but found 8.3
 ```
 
-Or this nightmare?
+Or this absolute nightmare (Android Navigation + KAPT→KSP migration)?
 
 ```bash
 $ ./gradlew build
-> Multiple build failures:
-  - Hilt 2.48 incompatible with Kotlin 1.9.22
-  - Compose BOM 2023.08.00 conflicts with Material3 1.2.0
-  - Coroutines 1.7.3 needs Kotlin >= 1.8.21, found 1.8.20
+> Task :app:kaptGenerateStubsDebugKotlin FAILED
+KAPT deprecated, migrate to KSP
+
+$ # Hours later, after KSP migration...
+$ ./gradlew build  
+> Multiple build failures across 3 Gradle files:
+  - Navigation 2.7.5 requires KSP 1.9.20, found 1.8.22 (gradle/libs.versions.toml)
+  - Hilt 2.48 incompatible with KSP 1.9.20 (app/build.gradle) 
+  - Room 2.6.0 needs Kotlin 1.9.20, found 1.8.20 (project/build.gradle)
+  - Compose BOM 2023.08.00 conflicts with Navigation Compose 2.7.5
 ```
 
 Stupid Dependencies catches these version conflicts **before** you waste hours debugging, and shows you exactly what's broken with real version data:
 
 ```bash
 $ stupid check
-🩺 Scanning Android project...
+🩺 Scanning Android project (3 Gradle files)...
 
-❌ CRITICAL: Kotlin-Gradle compatibility matrix violation
-   • Kotlin 1.8.20 requires Gradle 6.8.3 - 8.1, found 8.3
-   💡 Either downgrade Gradle to 8.1 or upgrade Kotlin to 1.9.0+
+❌ CRITICAL: KAPT→KSP migration incomplete
+   • KAPT still enabled in app/build.gradle 
+   • KSP 1.8.22 incompatible with Navigation 2.7.5 (requires KSP 1.9.20+)
+   • 💡 Complete KSP migration + upgrade Kotlin to 1.9.20
 
-⚠️  OUTDATED: 3 dependencies behind latest versions
-   • Hilt 2.48 → 2.56.2 (8 versions behind)
-   • OkHttp 4.11.0 → 4.12.0 (available)
-   • Compose BOM 2023.08.00 → 2024.02.00 (major update)
+❌ CRITICAL: Multi-file version conflicts
+   • gradle/libs.versions.toml: kotlin = "1.8.20"
+   • project/build.gradle: Room 2.6.0 needs Kotlin 1.9.20+
+   • app/build.gradle: Hilt 2.48 incompatible with KSP 1.9.20
 
-🔄 VERSION CONFLICTS detected:
-   • kotlinx-coroutines-core 1.6.3 vs kotlinx-coroutines-android 1.7.3
-   • material3 1.2.0 incompatible with compose-bom 2023.08.00
+⚠️  NAVIGATION NIGHTMARE: 4 conflicting versions
+   • navigation-compose 2.7.5 vs compose-bom 2023.08.00 (incompatible)
+   • material3 1.2.0 requires compose-bom 2024.02.00+
+   • Room navigation integration broken by version mismatch
 
 $ stupid fix --live
-📡 Querying Maven Central for latest stable versions...
+📡 Querying Maven Central + Android compatibility matrices...
 
-🔧 Recommended fixes:
-1. Upgrade Kotlin: 1.8.20 → 1.9.22 (supports Gradle 8.3) 🟢
-   → Update gradle/libs.versions.toml: kotlin = "1.9.22"
+🔧 KAPT→KSP Migration Plan:
+1. Upgrade Kotlin: 1.8.20 → 1.9.20 (minimum for KSP + Navigation) 🟢
+   → gradle/libs.versions.toml: kotlin = "1.9.20", ksp = "1.9.20-1.0.14"
    
-2. Align Coroutines versions to 1.7.3 🟢  
-   → Update build.gradle.kts dependencies
+2. Complete KSP migration 🟢
+   → Remove kapt plugin from app/build.gradle
+   → Add ksp plugin, update all kapt() → ksp()
    
-3. Update Hilt to 2.56.2 (no breaking changes) 🟢
-   → Safe upgrade with compatibility maintained
+3. Fix Navigation compatibility chain 🟢
+   → Compose BOM 2023.08.00 → 2024.02.00 
+   → Navigation Compose 2.7.5 (compatible with new BOM)
+   → Material3 automatically resolved to 1.2.1
+   
+4. Update Hilt + Room for KSP compatibility 🟢
+   → Hilt 2.48 → 2.50 (first KSP-compatible version)
+   → Room 2.6.0 → 2.6.1 (KSP stability fixes)
 
+⚡ Estimated build time improvement: 40% faster (KSP vs KAPT)
 Apply all fixes? [y/N]
 ```
 

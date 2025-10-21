@@ -1,0 +1,79 @@
+[versions]
+# PROBLEM: Kotlin version too old for modern KSP + Navigation
+kotlin = "1.8.20"  # Should be 1.9.20+ for KSP + Navigation 2.7.5+
+ksp = "1.8.22-1.0.11"  # Incompatible with Navigation 2.7.5 (needs 1.9.20+)
+
+# PROBLEM: AGP and Gradle versions
+agp = "8.1.4"
+gradle = "8.3"
+
+# PROBLEM: Compose versions scattered and inconsistent
+compose-bom = "2023.08.00"  # OLD BOM - incompatible with Navigation 2.7.5
+compose-compiler = "1.4.3"  # Tied to old Kotlin version
+material3 = "1.2.0"  # Requires newer BOM
+
+# PROBLEM: Navigation versions don't match
+navigation = "2.7.5"  # Requires KSP 1.9.20+ and newer Compose BOM
+navigation-runtime = "2.7.6"  # Different version than navigation-compose!
+
+# PROBLEM: Hilt version with limited KSP support
+hilt = "2.48"  # Old version, should be 2.50+ for stable KSP
+
+# PROBLEM: Room version needs newer Kotlin
+room = "2.6.0"  # Requires Kotlin 1.9.20+ but using 1.8.20
+
+# PROBLEM: Coroutines versions mismatched
+coroutines = "1.6.3"
+coroutines-android = "1.7.3"  # Should match coroutines version
+
+# Android SDK versions
+compileSdk = "34"
+minSdk = "24"
+targetSdk = "34"
+
+# Other dependencies
+core-ktx = "1.12.0"
+lifecycle = "2.7.0"
+activity-compose = "1.8.2"
+
+[libraries]
+# Compose (with BOM conflicts)
+compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
+compose-ui = { group = "androidx.compose.ui", name = "ui" }
+compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
+
+# Navigation (version conflicts)
+navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
+navigation-runtime = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigation-runtime" }
+
+# Hilt (KAPT vs KSP issues)
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+
+# Room (KAPT vs KSP issues)
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+
+# Coroutines (version mismatch)
+coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
+coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines-android" }
+
+# Android core
+core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
+lifecycle-runtime = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
+activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
+# Missing: ksp plugin that should replace kapt
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+
+[bundles]
+compose = ["compose-ui", "compose-ui-tooling", "compose-material3"]
+navigation = ["navigation-compose", "navigation-runtime"]
+room = ["room-runtime", "room-ktx"]
+coroutines = ["coroutines-core", "coroutines-android"]
