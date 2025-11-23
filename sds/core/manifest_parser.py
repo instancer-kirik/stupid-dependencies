@@ -28,6 +28,8 @@ class ManifestParser:
             "Pipfile": self._parse_pipfile,
             "Cargo.toml": self._parse_cargo_toml,
             "go.mod": self._parse_go_mod,
+            "mix.exs": self._parse_mix_exs,
+            "mix.lock": self._parse_mix_lock,
         }
 
     def parse_all(self) -> Dict[str, Any]:
@@ -399,5 +401,62 @@ class ManifestParser:
             dep_matches = re.findall(r"(\S+)\s+v?(\S+)", deps_content)
             for module, version in dep_matches:
                 result["dependencies"][module] = version
+
+        return result
+
+    def _parse_mix_exs(self, path: Path) -> Dict[str, Any]:
+        """Parse Elixir mix.exs file."""
+        content = path.read_text()
+        result = {"dependencies": {}, "type": "elixir"}
+
+        # Extract Elixir version requirement
+        elixir_match = re.search(r'elixir:\s*"([^"]*)"', content)
+        if elixir_match:
+            result["elixir_version"] = elixir_match.group(1)
+
+        # Extract dependencies from deps function
+        deps_match = re.search(r"defp\s+deps\s+do\s*\[(.*?)\]", content, re.DOTALL)
+        if deps_match:
+            deps_content = deps_match.group(1)
+
+            # Match various dependency formats
+            # {:package, "~> 1.0"}
+            # {:package, "~> 1.0", only: :dev}
+            # {:package, git: "https://github.com/...", ref: "master"}
+            dep_patterns = [
+                r'\{:(\w+),\s*"([^"]*)"[^}]*\}',  # Standard hex dependencies
+                r'\{:(\w+),\s*git:\s*"[^"]*"[^}]*\}',  # Git dependencies
+            ]
+
+            for pattern in dep_patterns:
+                for match in re.finditer(pattern, deps_content):
+                    dep_name = match.group(1)
+                    if len(match.groups()) > 1:
+                        version = match.group(2)
+                        result["dependencies"][dep_name] = {"version": version}
+                    else:
+                        result["dependencies"][dep_name] = {"version": "git"}
+
+        # Check for known problematic combinations
+        if "elixir_version" in result and result["dependencies"]:
+            elixir_ver = result["elixir_version"]
+            # Check for inflex + Elixir 1.18 compatibility issue
+            if "inflex" in result["dependencies"] and "1.18" in elixir_ver:
+                result["known_issues"] = ["inflex_elixir_18_compatibility"]
+
+        return result
+
+    def _parse_mix_lock(self, path: Path) -> Dict[str, Any]:
+        """Parse Elixir mix.lock file for exact dependency versions."""
+        content = path.read_text()
+        result = {"locked_dependencies": {}, "type": "elixir_lock"}
+
+        # Parse mix.lock format: "package_name": {:hex, :package_name, "1.2.3", ...}
+        lock_pattern = r'"(\w+)":\s*\{[^,]*,\s*:\1,\s*"([^"]*)"'
+
+        for match in re.finditer(lock_pattern, content):
+            package_name = match.group(1)
+            version = match.group(2)
+            result["locked_dependencies"][package_name] = {"version": version}
 
         return result

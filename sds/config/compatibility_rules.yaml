@@ -1,0 +1,254 @@
+# Version-Agnostic Compatibility Rules Configuration
+# This file defines compatibility issues, conflicts, and fixes in a declarative way
+# that doesn't hardcode specific version numbers or tool versions.
+
+# Global version constraint patterns that apply across all tools
+version_patterns:
+  # Common semantic version patterns
+  semver: "\\d+\\.\\d+\\.\\d+"
+  semver_loose: "\\d+\\.\\d+(?:\\.\\d+)?"
+
+  # Version constraint operators
+  operators:
+    - "~>"  # Compatible release
+    - ">="  # Greater than or equal
+    - "<="  # Less than or equal
+    - ">"   # Greater than
+    - "<"   # Less than
+    - "="   # Exact match
+    - "^"   # Caret range
+    - "~"   # Tilde range
+
+# Tool-specific configuration
+tools:
+  elixir:
+    # Version extraction patterns for different sources
+    version_patterns:
+      mix_exs: 'elixir:\s*"([^"]*)"'
+      system: "Elixir (\\d+\\.\\d+\\.\\d+)"
+
+    # Known compatibility rules
+    compatibility_rules:
+      # Rule for module attribute restrictions
+      - id: "module_attribute_restrictions"
+        description: "Stricter module attribute handling in newer versions"
+        affected_versions:
+          operator: ">="
+          version: "1.18.0"
+        symptoms:
+          - "cannot inject attribute.*into function/macro"
+          - "cannot escape.*Reference"
+        causes:
+          - "deprecated_module_attributes"
+        category: "compilation_error"
+
+      # Rule for OTP compatibility
+      - id: "otp_compatibility"
+        description: "OTP version compatibility requirements"
+        dependencies:
+          - tool: "erlang"
+            constraint: ">=26.0"
+        category: "runtime_requirement"
+
+    # Package-specific issues
+    package_issues:
+      inflex:
+        - issue_id: "deprecated_module_attrs"
+          description: "Uses deprecated module attribute patterns"
+          affects_versions: "all"  # All versions of inflex have this issue
+          triggers_with:
+            - tool: "elixir"
+              version_constraint: ">=1.18.0"
+          error_patterns:
+            - "cannot inject attribute @\\w+ into function/macro"
+            - "cannot escape #Reference"
+          severity: "error"
+
+      igniter:
+        - issue_id: "inflex_transitive_dep"
+          description: "Pulls in inflex as transitive dependency"
+          triggers_with:
+            - tool: "elixir"
+              version_constraint: ">=1.18.0"
+          dependency_chain: ["igniter", "inflex"]
+          severity: "error"
+
+  python:
+    version_patterns:
+      system: "Python (\\d+\\.\\d+\\.\\d+)"
+      pyproject: 'requires-python\\s*=\\s*"([^"]*)"'
+
+    compatibility_rules:
+      - id: "async_syntax_requirement"
+        description: "async/await syntax requires minimum version"
+        required_version: ">=3.5.0"
+        category: "language_feature"
+
+  node:
+    version_patterns:
+      system: "v(\\d+\\.\\d+\\.\\d+)"
+      package_json: '"node":\\s*"([^"]*)"'
+
+    compatibility_rules:
+      - id: "es6_modules"
+        description: "ES6 module support"
+        required_version: ">=12.0.0"
+        category: "language_feature"
+
+  rust:
+    version_patterns:
+      system: "rustc (\\d+\\.\\d+\\.\\d+)"
+      cargo_toml: 'rust-version\\s*=\\s*"([^"]*)"'
+
+  java:
+    version_patterns:
+      system: "openjdk version \"(\\d+\\.\\d+\\.\\d+)"
+      maven: "<maven.compiler.source>(\\d+)</maven.compiler.source>"
+      gradle: "sourceCompatibility\\s*=\\s*[\"']?(\\d+)[\"']?"
+
+# Generic fix templates that can be parameterized
+fix_templates:
+  # Version manager fixes
+  version_manager_install:
+    asdf:
+      description: "Install {tool} {version} via asdf"
+      command: "asdf install {tool} {version} && asdf global {tool} {version}"
+      risk_level: "low"
+
+    tool_specific:
+      python:
+        uv:
+          description: "Install Python {version} via uv"
+          command: "uv python install {version}"
+          risk_level: "low"
+        pyenv:
+          description: "Install Python {version} via pyenv"
+          command: "pyenv install {version} && pyenv global {version}"
+          risk_level: "low"
+
+      node:
+        nvm:
+          description: "Install Node.js {version} via nvm"
+          command: "nvm install {version} && nvm use {version}"
+          risk_level: "low"
+
+      rust:
+        rustup:
+          description: "Install Rust {version} via rustup"
+          command: "rustup install {version} && rustup default {version}"
+          risk_level: "low"
+
+      elixir:
+        kiex:
+          description: "Install Elixir {version} via kiex"
+          command: "kiex install {version} && kiex use {version}"
+          risk_level: "low"
+
+      zig:
+        zigup:
+          description: "Install Zig {version} via zigup"
+          command: "zigup {version}"
+          risk_level: "low"
+
+  # Package-specific fixes
+  package_override:
+    elixir_git_override:
+      description: "Override {package} with compatible fork"
+      command: 'Add {{{:{package}, git: "{git_url}", ref: "{ref}", override: true}} to mix.exs deps'
+      risk_level: "low"
+      alternatives_template:
+        - 'Use {fork_name} fork: {{{:{package}, git: "{alt_git_url}", ref: "{alt_ref}", override: true}}'
+
+# Specific package fixes database
+package_fixes:
+  elixir:
+    inflex:
+      # Multiple vetted solutions for inflex compatibility
+      primary_fix:
+        type: "git_override"
+        git_url: "https://github.com/improvingjef/inflex.git"
+        ref: "master"
+        description: "improvingjef's OTP 28 compatible fork"
+        verification: "tested_with_elixir_1.18"
+
+      alternative_fixes:
+        - type: "git_override"
+          git_url: "https://github.com/warmwaffles/inflex.git"
+          ref: "master"
+          description: "warmwaffles' compatible fork"
+          fork_name: "warmwaffles"
+
+        - type: "git_override"
+          git_url: "https://github.com/Kitisaks/inflex.git"
+          ref: "master"
+          description: "Kitisaks' compatible fork"
+          fork_name: "Kitisaks"
+
+        - type: "version_downgrade"
+          description: "Downgrade Elixir to compatible version"
+          target_version: "1.17.x"
+          risk_level: "medium"
+
+        - type: "temporary_removal"
+          description: "Remove packages that depend on igniter/inflex temporarily"
+          risk_level: "high"
+
+# Detection patterns for identifying issues from logs/output
+detection_patterns:
+  compilation_errors:
+    elixir:
+      module_attribute_injection:
+        patterns:
+          - "\\*\\* \\(ArgumentError\\) cannot inject attribute @\\w+ into function/macro"
+          - "cannot escape #Reference<\\d+\\.\\d+\\.\\d+\\.\\d+>"
+        suggests_rules: ["module_attribute_restrictions"]
+        suggests_packages: ["inflex"]
+
+  runtime_errors:
+    version_mismatch:
+      patterns:
+        - "version .* does not match requirement"
+        - "requires .* but got"
+
+# Severity levels and risk assessment
+severity_levels:
+  error:
+    description: "Blocks compilation or runtime"
+    priority: 1
+  warning:
+    description: "May cause issues but doesn't block"
+    priority: 2
+  info:
+    description: "Informational, best practice"
+    priority: 3
+
+risk_levels:
+  low:
+    description: "Safe change, minimal impact"
+    color: "green"
+  medium:
+    description: "May affect other parts of project"
+    color: "yellow"
+  high:
+    description: "Significant change, test thoroughly"
+    color: "red"
+
+# Analysis message templates
+analysis_templates:
+  version_mismatch:
+    newer: "{tool} {current} is newer than project requirement {required}. {compatibility_note}"
+    older: "{tool} {current} is below project requirement {required}. {missing_features}"
+    missing: "{tool} not found. Project requires {required} for {reason}."
+
+  compatibility_notes:
+    generally_safe: "Generally compatible but monitor for deprecations."
+    abi_concerns: "ABI compatibility may be compromised."
+    check_breaking: "Check for breaking changes."
+    verify_deps: "Dependency compatibility should be verified."
+
+  missing_features:
+    language: "Language features may be missing."
+    security: "Missing security updates."
+    bug_fixes: "Missing bug fixes."
+    es_features: "Missing ES features."
+    jvm_features: "Missing JVM features."

@@ -266,6 +266,7 @@ class DependencySolver:
         conflicts.extend(self._check_python_conflicts(env_info, manifests))
         conflicts.extend(self._check_rust_conflicts(env_info, manifests))
         conflicts.extend(self._check_go_conflicts(env_info, manifests))
+        conflicts.extend(self._check_elixir_conflicts(env_info, manifests))
 
         # Enrich conflicts with version manager info and available versions
         for conflict in conflicts:
@@ -677,6 +678,80 @@ class DependencySolver:
 
         return conflicts
 
+    def _check_elixir_conflicts(
+        self, env_info: Dict[str, Any], manifests: Dict[str, Any]
+    ) -> List[Conflict]:
+        """Check for Elixir conflicts, including known compatibility issues."""
+        conflicts = []
+
+        mix_exs = manifests.get("mix.exs")
+        if not mix_exs:
+            return conflicts
+
+        # Check Elixir version compatibility
+        required_elixir = mix_exs.get("elixir_version")
+        if required_elixir:
+            elixir_info = env_info.get("elixir")
+            if elixir_info:
+                current_elixir = elixir_info["version"]
+
+                # Parse version requirements (e.g., "~> 1.14")
+                if "~>" in required_elixir:
+                    min_version = required_elixir.split("~>")[1].strip()
+                    try:
+                        if pkg_version.parse(current_elixir) < pkg_version.parse(
+                            min_version
+                        ):
+                            conflicts.append(
+                                Conflict(
+                                    tool="elixir",
+                                    severity="error",
+                                    message=f"Elixir {current_elixir} found, but {required_elixir} required",
+                                    reason="version mismatch",
+                                    current_version=current_elixir,
+                                    required_version=required_elixir,
+                                )
+                            )
+                    except Exception:
+                        pass  # Skip if version parsing fails
+
+        # Check for known compatibility issues
+        known_issues = mix_exs.get("known_issues", [])
+        if "inflex_elixir_18_compatibility" in known_issues:
+            elixir_info = env_info.get("elixir")
+            if elixir_info and "1.18" in elixir_info["version"]:
+                conflicts.append(
+                    Conflict(
+                        tool="elixir",
+                        severity="error",
+                        message="inflex package is incompatible with Elixir 1.18+",
+                        reason="Known compatibility issue: inflex uses deprecated module attribute patterns",
+                        details="The inflex package contains code that cannot compile with Elixir 1.18 due to stricter module attribute restrictions",
+                        current_version=elixir_info["version"],
+                        required_version="< 1.18 or patched inflex version",
+                    )
+                )
+
+        # Also check mix.lock for transitive dependencies
+        mix_lock = manifests.get("mix.lock")
+        if mix_lock and mix_lock.get("locked_dependencies", {}).get("inflex"):
+            elixir_info = env_info.get("elixir")
+            if elixir_info and "1.18" in elixir_info["version"]:
+                inflex_version = mix_lock["locked_dependencies"]["inflex"]["version"]
+                conflicts.append(
+                    Conflict(
+                        tool="elixir",
+                        severity="error",
+                        message=f"inflex {inflex_version} is incompatible with Elixir 1.18+",
+                        reason="Known compatibility issue: inflex uses deprecated module attribute patterns that fail compilation in Elixir 1.18",
+                        details="The inflex package (pulled in by igniter/ash dependencies) contains code that cannot compile with Elixir 1.18 due to stricter module attribute restrictions",
+                        current_version=elixir_info["version"],
+                        required_version="< 1.18 or patched inflex version",
+                    )
+                )
+
+        return conflicts
+
     def _suggest_tool_fixes(
         self, conflict: Conflict, env_info: Dict[str, Any], manifests: Dict[str, Any]
     ) -> List[Fix]:
@@ -847,6 +922,57 @@ class DependencySolver:
 
             if alternatives and fixes:
                 fixes[0].alternatives = alternatives
+
+        elif conflict.tool == "elixir":
+            if "inflex" in conflict.reason.lower():
+                # Specific fix for inflex compatibility issue
+                fixes.append(
+                    Fix(
+                        description="Override inflex dependency to use OTP 28 compatible fork",
+                        command='Add {:inflex, git: "https://github.com/improvingjef/inflex.git", ref: "master", override: true} to mix.exs deps',
+                        risk_level="low",
+                        tool="elixir",
+                        action_type="config",
+                        alternatives=[
+                            'Use warmwaffles fork: {:inflex, git: "https://github.com/warmwaffles/inflex.git", ref: "master", override: true}',
+                            'Use Kitisaks fork: {:inflex, git: "https://github.com/Kitisaks/inflex.git", ref: "master", override: true}',
+                            "Downgrade Elixir to 1.17.x",
+                            "Remove packages that depend on igniter/inflex temporarily",
+                        ],
+                    )
+                )
+            elif conflict.required_version:
+                target_version = conflict.required_version.replace("~>", "").strip()
+                if vm == "asdf":
+                    fixes.append(
+                        Fix(
+                            description=f"Switch to Elixir {target_version} via asdf",
+                            command=f"asdf install elixir {target_version} && asdf global elixir {target_version}",
+                            risk_level="low",
+                            tool="elixir",
+                            version_manager="asdf",
+                        )
+                    )
+                elif vm == "kiex":
+                    fixes.append(
+                        Fix(
+                            description=f"Install and switch to Elixir {target_version} via kiex",
+                            command=f"kiex install {target_version} && kiex use {target_version}",
+                            risk_level="low",
+                            tool="elixir",
+                            version_manager="kiex",
+                        )
+                    )
+                else:
+                    fixes.append(
+                        Fix(
+                            description="Install Elixir from official source",
+                            command="Visit https://elixir-lang.org/install.html for installation instructions",
+                            risk_level="medium",
+                            tool="elixir",
+                            action_type="install",
+                        )
+                    )
 
         return fixes
 

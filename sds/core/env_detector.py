@@ -13,8 +13,8 @@ import os
 class EnvironmentDetector:
     """Detects development environment tools, versions, and version managers."""
 
-    def __init__(self, project_path: Path):
-        self.project_path = project_path
+    def __init__(self, project_path: Optional[Path] = None):
+        self.project_path = project_path or Path.cwd()
         self.version_managers = self._detect_version_managers()
         self.detectors = {
             "zig": self._detect_zig,

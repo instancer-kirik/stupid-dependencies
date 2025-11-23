@@ -1,11 +1,20 @@
-# Core dependencies
+# Core dependencies for Version-Agnostic SDS
 toml>=0.10.2
 packaging>=21.0
 requests>=2.25.0
+PyYAML>=6.0
+semver>=2.13.0
+click>=8.0.0
 
-# Development dependencies (optional, install with pip install -r requirements-dev.txt)
+# Optional enhanced features (install with pip install -e ".[full]")
+# rich>=12.0.0          # Enhanced terminal output
+# tabulate>=0.9.0       # Better table formatting
+# colorama>=0.4.4       # Cross-platform colors
+
+# Development dependencies (install with pip install -r requirements-dev.txt)
 # pytest>=7.0
 # pytest-cov>=4.0
 # black>=23.0
 # flake8>=6.0
 # mypy>=1.0
+# pre-commit>=3.0.0
